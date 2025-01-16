@@ -47,7 +47,7 @@ const ImageModal = ({ imageSrc, altText, onClose }) => (
 function App() {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadedImage, setUploadedImage] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
 
@@ -64,21 +64,29 @@ function App() {
   });
 
 
-    // const [fetchingUpload] = useFetching( async () => {
-    //     const response = await apiClient.post(`${config.endpoints.tags}/vit`);
-    // });
+    const [fetchingUpload,uploadLoading] = useFetching( async () => {
+        const response = await apiClient.post(`${config.endpoints.tags.types.vit}`,{
+            file: uploadedImage,
+        });
+
+        if (response.data) {
+            console.log(response.data);
+        }
+    });
 
   const handleSearch = async () => {
     await fetching();
   };
 
+  const handleUploadFetch = async () => {
+      await fetchingUpload();
+  }
+
   const handleUpload = (event) => {
-    const files = Array.from(event.target.files);
-    const newImages = files.map((file) => URL.createObjectURL(file));
-    setUploadedImages((prev) => {
-      const updatedImages = [...newImages, ...prev];
-      return updatedImages.slice(0, 15);
-    });
+    const file = Array.from(event.target.files);
+    if (file.length > 0) {
+        setUploadedImage(file[0]);
+    }
   };
 
   const openModal = (image) => {
@@ -90,6 +98,10 @@ function App() {
     setModalOpen(false);
     setModalImage("");
   };
+
+    useEffect(() => {
+        handleUploadFetch();
+    }, [uploadedImage]);
 
 
   return (
@@ -109,29 +121,30 @@ function App() {
           <input
             type="file"
             accept="image/*"
-            multiple
             onChange={handleUpload}
           />
         </div>
 
-        <h2>Last 15 Uploaded Images</h2>
-        <div className="image-grid">
-          {uploadedImages.map((image, index) => (
-            <ImageCard
-              key={index}
-              imageSrc={image}
-              altText={`Uploaded ${index + 1}`}
-              onClick={() => openModal(image)}
-            />
-          ))}
-        </div>
+        <h2>Last Uploaded Image</h2>
+          {!!uploadedImage  && (
+              <div className="image-grid">
+                  <ImageCard
+                      imageSrc={URL.createObjectURL(uploadedImage)}
+                      altText={`Uploaded`}
+                      onClick={() => {
+                      }}
+                  />
+              </div>
 
-        <h2>Search Results</h2>
+          )}
+
+
+          <h2>Search Results</h2>
           {loading === true && <>
-            <h1>
-                Загрузка...
-            </h1>
-          </> }
+              <h1>
+                  Загрузка...
+              </h1>
+          </>}
           {
               !loading && !!responseImages && (
                   <div className="image-grid">
