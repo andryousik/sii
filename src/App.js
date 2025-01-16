@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {useFetching} from "./hooks/useFetching";
 import "./App.css";
 import useFetching from "./hooks/useFetching";
 import {apiClient, config} from "./api/config";
