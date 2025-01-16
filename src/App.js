@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
+import {useFetching} from "./hooks/useFetching";
 import "./App.css";
+import {config} from "./api/config";
 
 // Компонент для вывода изображения с подписью
 const ImageCard = ({ imageSrc, altText, onClick }) => (
@@ -25,6 +27,7 @@ function App() {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
+  const {data,fetching} = useFetching(`${config.endpoints.search}?search_string=blue%20&page=1&page_size=10`,"get");
 
   const funSearch = async (tags) => {
     const { data } = await axios(`/search/${tags}`);
@@ -60,6 +63,14 @@ function App() {
     setModalImage("");
   };
 
+  useEffect( async  () => {
+    await fetching();
+  }, []);
+
+  useEffect(() => {
+      console.log(data);
+  }, [data]);
+
   return (
     <div className="App">
       <header>
@@ -77,7 +88,6 @@ function App() {
           <input
             type="file"
             accept="image/*"
-            multiple
             onChange={handleUpload}
           />
         </div>
