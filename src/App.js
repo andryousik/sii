@@ -64,7 +64,7 @@ function App() {
   });
 
 
-    const [fetchingUpload,uploadLoading] = useFetching( async () => {
+    const [fetchingUpload,uploadLoading,uploadError] = useFetching( async () => {
         const response = await apiClient.post(`${config.endpoints.tags.types.vit}`,{
             file: uploadedImage,
         });
@@ -100,7 +100,9 @@ function App() {
   };
 
     useEffect(() => {
-        handleUploadFetch();
+        if (uploadedImage) {
+            handleUploadFetch();
+        }
     }, [uploadedImage]);
 
 
