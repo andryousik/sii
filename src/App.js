@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import "./App.css";
+import useFetching from "./hooks/useFetching";
+import {apiClient, config} from "./api/config";
 
 // Компонент для вывода изображения с подписью
 const ImageCard = ({ imageSrc, altText, onClick }) => (
@@ -25,11 +27,17 @@ function App() {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
+  const [fetching, isLoading, error, setError] = useFetching( async () => {
+      const response = await apiClient.get(`${config.endpoints.search}?search_string=blue%20&page=1&page_size=10`);
+
+      console.log(response);
+  })
 
   const funSearch = async (tags) => {
     const { data } = await axios(`/search/${tags}`);
     return data;
   };
+
 
   const handleSearch = async () => {
     try {
@@ -59,6 +67,10 @@ function App() {
     setModalOpen(false);
     setModalImage("");
   };
+
+    useEffect(() => {
+        fetching();
+    }, []);
 
   return (
     <div className="App">
