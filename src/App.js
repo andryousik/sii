@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.css";
 import useFetching from "./hooks/useFetching";
 import {apiClient, config} from "./api/config";
+import {upload} from "@testing-library/user-event/dist/upload";
 
 
 // {
@@ -50,6 +51,7 @@ function App() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
+  const [iFormData, setIFormData] = useState({});
 
 
   const [responseImages, setResponseImages] = useState(null);
@@ -63,29 +65,32 @@ function App() {
       }
   });
 
+  const handleSearch = async () => {
+      if (!!query) {
+          await fetching();
+      }
+  };
 
-    const [fetchingUpload,uploadLoading,uploadError] = useFetching( async () => {
-        const response = await apiClient.post(`${config.endpoints.tags.types.vit}`,{
-            file: uploadedImage,
+
+
+  const handleUpload = async (event) => {
+    const file = Array.from(event.target.files);
+    if (file.length > 0) {
+        setUploadedImage(file[0]);
+        const formData = new FormData();
+        formData.append("file", file[0]);
+        const request = {
+            file: file,
+        }
+        const response = await apiClient.post(`${config.endpoints.tags.types.vit}`, request, {
+            headers: {
+                "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
+            },
         });
 
         if (response.data) {
             console.log(response.data);
         }
-    });
-
-  const handleSearch = async () => {
-    await fetching();
-  };
-
-  const handleUploadFetch = async () => {
-      await fetchingUpload();
-  }
-
-  const handleUpload = (event) => {
-    const file = Array.from(event.target.files);
-    if (file.length > 0) {
-        setUploadedImage(file[0]);
     }
   };
 
@@ -98,12 +103,6 @@ function App() {
     setModalOpen(false);
     setModalImage("");
   };
-
-    useEffect(() => {
-        if (uploadedImage) {
-            handleUploadFetch();
-        }
-    }, [uploadedImage]);
 
 
   return (
@@ -119,15 +118,17 @@ function App() {
           />
           <button onClick={handleSearch}>Search</button>
         </div>
-        <div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-          />
-        </div>
+          <div>
+              <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleUpload}
+              />
 
-        <h2>Last Uploaded Image</h2>
+
+          </div>
+
+          <h2>Last Uploaded Image</h2>
           {!!uploadedImage  && (
               <div className="image-grid">
                   <ImageCard
