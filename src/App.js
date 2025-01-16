@@ -4,6 +4,29 @@ import "./App.css";
 import useFetching from "./hooks/useFetching";
 import {apiClient, config} from "./api/config";
 
+
+// {
+//     "data": [
+//     {
+//         "id": 0,
+//         "resolution_width": 0,
+//         "resolution_height": 0,
+//         "url_page": "string",
+//         "url_image": "string",
+//         "path": "string",
+//         "tags": [
+//             {
+//                 "id": 0,
+//                 "name": "string"
+//             }
+//         ]
+//     }
+// ],
+//     "total": 0
+// }
+
+
+
 // Компонент для вывода изображения с подписью
 const ImageCard = ({ imageSrc, altText, onClick }) => (
   <div className="image-card" onClick={onClick}>
@@ -27,26 +50,26 @@ function App() {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
-  const [fetching, isLoading, error, setError] = useFetching( async () => {
-      const response = await apiClient.get(`${config.endpoints.search}?search_string=blue%20&page=1&page_size=10`);
 
-      console.log(response);
-  })
 
-  const funSearch = async (tags) => {
-    const { data } = await axios(`/search/${tags}`);
-    return data;
-  };
+  const [responseImages, setResponseImages] = useState(null);
 
+  const [fetching,loading,error] = useFetching( async () => {
+
+      const response = await apiClient.get(`${config.endpoints.search}?search_string=${query}%20&page=1&page_size=10`);
+
+      if (response.data) {
+          setResponseImages(response.data);
+      }
+  });
+
+
+    // const [fetchingUpload] = useFetching( async () => {
+    //     const response = await apiClient.post(`${config.endpoints.tags}/vit`);
+    // });
 
   const handleSearch = async () => {
-    try {
-      const results = await funSearch(query);
-      setSearchResults(results);
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-      alert("Failed to fetch search results. Please try again.");
-    }
+    await fetching();
   };
 
   const handleUpload = (event) => {
@@ -68,9 +91,6 @@ function App() {
     setModalImage("");
   };
 
-    useEffect(() => {
-        fetching();
-    }, []);
 
   return (
     <div className="App">
@@ -106,16 +126,32 @@ function App() {
         </div>
 
         <h2>Search Results</h2>
-        <div className="image-grid">
-          {searchResults.map((result, index) => (
-            <ImageCard
-              key={index}
-              imageSrc={result}
-              altText={`Search Result ${index + 1}`}
-              onClick={() => openModal(result)}
-            />
-          ))}
-        </div>
+          {loading === true && <>
+            <h1>
+                Загрузка...
+            </h1>
+          </> }
+          {
+              !loading && !!responseImages && (
+                  <div className="image-grid">
+                      {responseImages.data.map((image, index) => (
+                          <ImageCard key={index} imageSrc={image.url_image} altText={"Картинка"}
+                                     onClick={() => openModal(image)}/>
+                      ))}
+                  </div>
+              )
+          }
+
+          {/*<div className="image-grid">*/}
+          {/*  {searchResults.map((result, index) => (*/}
+          {/*    <ImageCard*/}
+          {/*      key={index}*/}
+          {/*      imageSrc={result}*/}
+          {/*      altText={`Search Result ${index + 1}`}*/}
+        {/*      onClick={() => openModal(result)}*/}
+        {/*    />*/}
+        {/*  ))}*/}
+        {/*</div>*/}
 
         {isModalOpen && (
           <ImageModal
