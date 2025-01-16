@@ -47,11 +47,9 @@ const ImageModal = ({ imageSrc, altText, onClose }) => (
 
 function App() {
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
-  const [iFormData, setIFormData] = useState({});
 
 
   const [responseImages, setResponseImages] = useState(null);
@@ -66,12 +64,8 @@ function App() {
   });
 
   const handleSearch = async () => {
-      if (!!query) {
-          await fetching();
-      }
+      await fetching();
   };
-
-
 
   const handleUpload = async (event) => {
     const file = Array.from(event.target.files);
@@ -87,7 +81,7 @@ function App() {
         });
 
         if (response.data) {
-            console.log(response.data);
+            // запиши этот response.data куданить
         }
     }
   };
@@ -101,6 +95,10 @@ function App() {
     setModalOpen(false);
     setModalImage("");
   };
+
+    useEffect(() => {
+        fetching();
+    }, []);
 
 
   return (
