@@ -77,12 +77,10 @@ function App() {
     const file = Array.from(event.target.files);
     if (file.length > 0) {
         setUploadedImage(file[0]);
-        const formData = new FormData();
-        formData.append("file", file[0]);
-        const request = {
-            file: file,
-        }
-        const response = await apiClient.post(`${config.endpoints.tags.types.vit}`, request, {
+
+        const response = await apiClient.post(`${config.endpoints.tags.types.vit}`, {
+            file: file[0]
+        }, {
             headers: {
                 "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
             },
