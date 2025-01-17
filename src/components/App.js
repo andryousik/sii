@@ -7,7 +7,7 @@ function App() {
     return (
         <div className="App">
             <div className="app__wrapper">
-                <h1>Image Search & Upload</h1>
+                <h1>Searching images</h1>
                 <div className="app__inner">
                     <SearchImage />
                     <UploadImage />

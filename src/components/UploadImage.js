@@ -29,20 +29,25 @@ const UploadImage = () => {
 
     const openModal = (image) => {
         setOpen(true);
-        setImage(image);
+        setImage({
+            url: URL.createObjectURL(uploadedImage),
+            tags: [], // Здесь можно добавить теги, если они получены с сервера
+        });
     };
 
     return (
         <section className="app__upload">
             <input type="file" accept="image/*" onChange={handleUpload} />
-            <h2>Last Uploaded Image</h2>
             {!!uploadedImage && (
                 <div className="image-grid">
                     <ImageCard
                         imageSrc={URL.createObjectURL(uploadedImage)}
                         altText={`Uploaded`}
                         onClick={() =>
-                            openModal(URL.createObjectURL(uploadedImage))
+                            openModal({
+                                url_image: URL.createObjectURL(uploadedImage),
+                                tags: [],
+                            })
                         }
                     />
                 </div>
