@@ -11,6 +11,7 @@ import { apiClient, config } from "../api/config";
 
 const UploadImage = () => {
     const [uploadedImage, setUploadedImage] = useState(null);
+    const [tags, setTags] = useState([]); // Сохраняем теги
     const { setOpen, setImage } = useModalStore((state) => state);
 
     const handleUpload = async (event) => {
@@ -18,27 +19,38 @@ const UploadImage = () => {
         if (file.length > 0) {
             setUploadedImage(file[0]); // Сохраняем первый загруженный файл
 
-            // КОГДА СЕРВЕР
-            const response = await apiClient.post(
-                `${config.endpoints.tags.types.vit}`,
-                {
-                    file: file[0], // Отправляем файл на сервер
-                },
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
+            try {
+                // Отправляем файл на сервер и получаем ответ
+                const response = await apiClient.post(
+                    `${config.endpoints.tags.types.vit}`,
+                    {
+                        file: file[0],
                     },
-                }
-            );
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
+                        },
+                    }
+                );
 
+                // Сохраняем теги из ответа
+                if (response.data && response.data.predicted_tags) {
+                    const predictedTags = response.data.predicted_tags.split(",").map((tag) => tag.trim()); // Преобразуем строку в массив
+                    setTags(predictedTags.map((tag) => ({ name: tag }))); // Преобразуем в ожидаемый формат
+                }
+            } catch (error) {
+                console.error("Ошибка при загрузке файла:", error);
+            }
         }
     };
 
-    const openModal = (image) => {
+    const openModal = () => {
+        if (!uploadedImage) return;
+
         setOpen(true);
         setImage({
             url: URL.createObjectURL(uploadedImage), // URL для отображения изображения
-            tags: uploadedImage.predicted_tags.map((tag) => ({ name: tag })), // Преобразуем теги в ожидаемый формат
+            tags: tags, // Передаем теги из состояния
         });
     };
 
