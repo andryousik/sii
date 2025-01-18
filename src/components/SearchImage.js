@@ -4,49 +4,49 @@ import useFetching from "../hooks/useFetching";
 import { apiClient, config } from "../api/config";
 import useModalStore from "../store/useModalStore";
 
-const hardData = {
-    data: [
-        {
-            id: 0,
-            resolution_width: 0,
-            resolution_height: 0,
-            url_page: "string",
-            url_image:
-                "https://avatars.mds.yandex.net/i?id=02a0d438915e4409b6779abb9faf64f6cfcca7e5-5380211-images-thumbs&n=13",
-            path: "string",
-            tags: [
-                {
-                    id: 0,
-                    name: "tag1",
-                },
-                {
-                    id: 1,
-                    name: "tag2",
-                },
-            ],
-        },
-        {
-            id: 1,
-            resolution_width: 0,
-            resolution_height: 0,
-            url_page: "string",
-            url_image:
-                "https://get.wallhere.com/photo/face-cat-nose-whiskers-skin-kitten-kid-fluffy-mammal-playful-vertebrate-close-up-cat-like-mammal-small-to-medium-sized-cats-carnivoran-domestic-short-haired-cat-700214.jpg",
-            path: "string",
-            tags: [
-                {
-                    id: 0,
-                    name: "tag1_lev",
-                },
-                {
-                    id: 1,
-                    name: "tag2_lev",
-                },
-            ],
-        },
-    ],
-    total: 0,
-};
+// const hardData = {
+//     data: [
+//         {
+//             id: 0,
+//             resolution_width: 0,
+//             resolution_height: 0,
+//             url_page: "string",
+//             url_image:
+//                 "https://avatars.mds.yandex.net/i?id=02a0d438915e4409b6779abb9faf64f6cfcca7e5-5380211-images-thumbs&n=13",
+//             path: "string",
+//             tags: [
+//                 {
+//                     id: 0,
+//                     name: "tag1",
+//                 },
+//                 {
+//                     id: 1,
+//                     name: "tag2",
+//                 },
+//             ],
+//         },
+//         {
+//             id: 1,
+//             resolution_width: 0,
+//             resolution_height: 0,
+//             url_page: "string",
+//             url_image:
+//                 "https://get.wallhere.com/photo/face-cat-nose-whiskers-skin-kitten-kid-fluffy-mammal-playful-vertebrate-close-up-cat-like-mammal-small-to-medium-sized-cats-carnivoran-domestic-short-haired-cat-700214.jpg",
+//             path: "string",
+//             tags: [
+//                 {
+//                     id: 0,
+//                     name: "tag1_lev",
+//                 },
+//                 {
+//                     id: 1,
+//                     name: "tag2_lev",
+//                 },
+//             ],
+//         },
+//     ],
+//     total: 0,
+// };
 
 const SearchImage = () => {
     const [query, setQuery] = useState("");
@@ -55,16 +55,16 @@ const SearchImage = () => {
 
     const [fetching, loading, error] = useFetching(async () => {
         // КОГДА СЕРВЕР
-        // const response = await apiClient.get(
-        //     `${config.endpoints.search}?search_string=${query}%20&page=1&page_size=10`
-        // );
-        //
-        // if (response.data) {
-        //     setResponseImages(response.data);
-        // }
+        const response = await apiClient.get(
+            `${config.endpoints.search}?search_string=${query}%20&page=1&page_size=10`
+        );
+        
+        if (response.data) {
+            setResponseImages(response.data);
+        }
 
         // ЭТО УДАЛИТЬ КОГДА БУДЕТ СЕРВЕР!!!!! 
-        setResponseImages(hardData);
+        // setResponseImages(hardData);
     });
 
     const openModal = (image) => {
