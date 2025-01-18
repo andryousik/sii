@@ -4,111 +4,91 @@ import useFetching from "../hooks/useFetching";
 import { apiClient, config } from "../api/config";
 import useModalStore from "../store/useModalStore";
 
-// const hardData = {
-//     data: [
-//         {
-//             id: 0,
-//             resolution_width: 0,
-//             resolution_height: 0,
-//             url_page: "string",
-//             url_image:
-//                 "https://avatars.mds.yandex.net/i?id=02a0d438915e4409b6779abb9faf64f6cfcca7e5-5380211-images-thumbs&n=13",
-//             path: "string",
-//             tags: [
-//                 {
-//                     id: 0,
-//                     name: "tag1",
-//                 },
-//                 {
-//                     id: 1,
-//                     name: "tag2",
-//                 },
-//             ],
-//         },
-//         {
-//             id: 1,
-//             resolution_width: 0,
-//             resolution_height: 0,
-//             url_page: "string",
-//             url_image:
-//                 "https://get.wallhere.com/photo/face-cat-nose-whiskers-skin-kitten-kid-fluffy-mammal-playful-vertebrate-close-up-cat-like-mammal-small-to-medium-sized-cats-carnivoran-domestic-short-haired-cat-700214.jpg",
-//             path: "string",
-//             tags: [
-//                 {
-//                     id: 0,
-//                     name: "tag1_lev",
-//                 },
-//                 {
-//                     id: 1,
-//                     name: "tag2_lev",
-//                 },
-//             ],
-//         },
-//     ],
-//     total: 0,
-// };
-
 const SearchImage = () => {
-    const [query, setQuery] = useState("");
-    const [responseImages, setResponseImages] = useState(null);
-    const { setOpen, setImage } = useModalStore((state) => state);
+  const [query, setQuery] = useState(""); // Текущий поисковый запрос
+  const [responseImages, setResponseImages] = useState(null); // Данные изображений
+  const [currentPage, setCurrentPage] = useState(1); // Текущая страница
+  const [totalPages, setTotalPages] = useState(1); // Общее количество страниц
+  const { setOpen, setImage } = useModalStore((state) => state);
 
-    const [fetching, loading, error] = useFetching(async () => {
-        // КОГДА СЕРВЕР
-        const response = await apiClient.get(
-            `${config.endpoints.search}?search_string=${query}%20&page=1&page_size=10`
-        );
-        
-        if (response.data) {
-            setResponseImages(response.data);
-        }
-
-        // ЭТО УДАЛИТЬ КОГДА БУДЕТ СЕРВЕР!!!!! 
-        // setResponseImages(hardData);
-    });
-
-    const openModal = (image) => {
-        setOpen(true);
-        setImage({
-            url: image.url_image,
-            tags: image.tags || [],
-        });
-    };
-
-    const handleSearch = async () => {
-        await fetching();
-    };
-
-    useEffect(() => {
-        handleSearch();
-    }, []);
-
-    return (
-        <section className="app__search">
-            <div>
-                <input
-                    type="text"
-                    placeholder="Search for images..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                />
-                <button onClick={handleSearch}>Search</button>
-            </div>
-            <h2>Search Results</h2>
-            {loading === true && <h1>Загрузка...</h1>}
-            {!loading && !!responseImages && (
-                <div className="image-grid">
-                    {responseImages.data.map((image, index) => (
-                        <ImageCard
-                            key={index}
-                            imageSrc={image.url_image}
-                            onClick={() => openModal(image)}
-                        />
-                    ))}
-                </div>
-            )}
-        </section>
+  const [fetching, loading, error] = useFetching(async () => {
+    // Получаем изображения с учетом текущей страницы и устанавливаем page_size=12
+    const response = await apiClient.get(
+      `${config.endpoints.search}?search_string=${query}&page=${currentPage}&page_size=12`
     );
+    if (response.data) {
+      setResponseImages(response.data.data);
+      setTotalPages(Math.ceil(response.data.total / 12)); // Рассчитываем общее количество страниц (по 12 изображений на страницу)
+    }
+  });
+
+  const handleSearch = async () => {
+    setCurrentPage(1); // Сбрасываем текущую страницу при новом поиске
+    await fetching();
+  };
+
+  const openModal = (image) => {
+    setOpen(true);
+    setImage({
+      url: image.url_image,
+      tags: image.tags || [],
+    });
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page); // Изменяем текущую страницу
+  };
+
+  useEffect(() => {
+    fetching(); // Вызываем поиск при изменении страницы или инициализации
+  }, [currentPage]);
+
+  return (
+    <section className="app__search">
+      <div>
+        <input
+          type="text"
+          placeholder="Search for images..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+      <h2>Search Results</h2>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <>
+          <div className="image-grid">
+            {responseImages?.map((image, index) => (
+              <ImageCard
+                key={index}
+                imageSrc={image.url_image}
+                onClick={() => openModal(image)}
+              />
+            ))}
+          </div>
+          <div className="pagination">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
+    </section>
+  );
 };
 
 export default SearchImage;
