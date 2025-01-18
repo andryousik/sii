@@ -50,7 +50,7 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
                     <button
                         onClick={() => handleLoadTags(config.endpoints.tags.types.vit)}
                         disabled={loading}
-                    >
+                    >   
                         vit
                     </button>
                     <button
@@ -72,13 +72,14 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
                         vit ∩ clip
                     </button>
                 </div>
-                {extraTags.length > 0 && (
+                {tags.length > 0 && (
                     <div className="extra-tags">
                         <h3>Loaded Tags:</h3>
-                        {extraTags.map((tag, index) => (
+                        {tags.map((tag, index) => (
                             <span key={index} className="tag">
                                 {tag.name}
                             </span>
+                            
                         ))}
                     </div>
                 )}
