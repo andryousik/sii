@@ -102,7 +102,6 @@ const SearchImage = () => {
                         <ImageCard
                             key={index}
                             imageSrc={image.url_image}
-                            altText={"Картинка"}
                             onClick={() => openModal(image)}
                         />
                     ))}
