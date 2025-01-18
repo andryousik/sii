@@ -6,13 +6,12 @@ import { apiClient, config } from "../api/config";
 const UploadImage = () => {
     const [uploadedImage, setUploadedImage] = useState(null); // Состояние для загруженного изображения
     const [tags, setTags] = useState([]); // Состояние для сохранения тегов
-    const { setOpen, setImage } = useModalStore((state) => state); // Управление состоянием модального окна
+    const { setOpen, setImage, setFile } = useModalStore((state) => state); // Управление состоянием модального окна
 
     const handleUpload = async (event) => {
         const file = Array.from(event.target.files); // Получаем список файлов
         if (file.length > 0) {
             setUploadedImage(file[0]); // Сохраняем первый загруженный файл
-
             try {
                 // Отправляем файл на сервер и получаем ответ
                 const response = await apiClient.post(
@@ -45,6 +44,7 @@ const UploadImage = () => {
             url: URL.createObjectURL(uploadedImage), // Преобразуем загруженный файл в URL
             tags: tags, // Передаем теги, сохраненные в состоянии
         });
+        setFile(uploadedImage);
     };
 
     return (

@@ -225,3 +225,12 @@ h2 {
   color: #555;
 }
 
+
+.tags-actions {
+  display: flex;
+  gap: 18px;
+}
+
+.app__search {
+  margin-bottom: 18px;
+}

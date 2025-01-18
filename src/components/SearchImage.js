@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import useFetching from "../hooks/useFetching";
 import { apiClient, config } from "../api/config";
 import useModalStore from "../store/useModalStore";
+import axios from "axios";
 
 const SearchImage = () => {
   const [query, setQuery] = useState(""); // Текущий поисковый запрос
@@ -16,6 +17,7 @@ const SearchImage = () => {
     const response = await apiClient.get(
       `${config.endpoints.search}?search_string=${query}&page=${currentPage}&page_size=12`
     );
+
     if (response.data) {
       setResponseImages(response.data.data);
       setTotalPages(Math.ceil(response.data.total / 12)); // Рассчитываем общее количество страниц (по 12 изображений на страницу)
