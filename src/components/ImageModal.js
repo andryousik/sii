@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { apiClient, config } from "../api/config";
 
-const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
+const ImageModal = ({ imageSrc, altText, tags = [], onClose,file }) => {
     const [extraTags, setExtraTags] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -9,7 +9,11 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
         setLoading(true);
         try {
             const response = await apiClient.post(endpoint, {
-                file: imageSrc,
+                file: file,
+            }, {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
+                },
             });
             if (response.data && Array.isArray(response.data.predicted_tags)) {
                 setExtraTags(response.data.predicted_tags.map((tag) => ({ name: tag })));
@@ -46,11 +50,12 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
                         <span>No tags available</span>
                     )}
                 </div>
-                <div className="tags-actions">
+                {!!file &&
+                    <div className="tags-actions">
                     <button
                         onClick={() => handleLoadTags(config.endpoints.tags.types.vit)}
                         disabled={loading}
-                    >
+                    >   
                         vit
                     </button>
                     <button
@@ -72,13 +77,15 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose }) => {
                         vit ∩ clip
                     </button>
                 </div>
-                {extraTags.length > 0 && (
+                }
+                {tags.length > 0 && (
                     <div className="extra-tags">
                         <h3>Loaded Tags:</h3>
-                        {extraTags.map((tag, index) => (
+                        {tags.map((tag, index) => (
                             <span key={index} className="tag">
                                 {tag.name}
                             </span>
+                            
                         ))}
                     </div>
                 )}
