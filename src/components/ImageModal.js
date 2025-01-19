@@ -29,46 +29,49 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose, file }) => {
         }
     };
 
-    return (
-        <div className="modal" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="image-container">
-                    <img src={imageSrc} alt={altText} />
+    const allTags = [...tags, ...extraTags];
+
+return (
+    <div className="modal" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="image-container">
+                <img src={imageSrc} alt={altText} />
+            </div>
+            {!!file && (
+                <div className="tags-actions">
+                    {[
+                        { label: "vit", endpoint: config.endpoints.tags.types.vit },
+                        { label: "clip", endpoint: config.endpoints.tags.types.clip },
+                        { label: "vit U clip", endpoint: config.endpoints.tags.types.union },
+                        { label: "vit ∩ clip", endpoint: config.endpoints.tags.types.intersection },
+                    ].map(({ label, endpoint }) => (
+                        <button
+                            key={label}
+                            onClick={() => handleLoadTags(endpoint, label)}
+                            disabled={selectedModel === label || loading}
+                            className={selectedModel === label ? "selected" : ""}
+                        >
+                            {label}
+                        </button>
+                    ))}
                 </div>
-                {!!file && (
-                    <div className="tags-actions">
-                        {[
-                            { label: "vit", endpoint: config.endpoints.tags.types.vit },
-                            { label: "clip", endpoint: config.endpoints.tags.types.clip },
-                            { label: "vit U clip", endpoint: config.endpoints.tags.types.union },
-                            { label: "vit ∩ clip", endpoint: config.endpoints.tags.types.intersection },
-                        ].map(({ label, endpoint }) => (
-                            <button
-                                key={label}
-                                onClick={() => handleLoadTags(endpoint, label)}
-                                disabled={selectedModel === label || loading} // Отключение кнопки, если она выбрана
-                                className={selectedModel === label ? "selected" : ""}
-                            >
-                                {label}
-                            </button>
+            )}
+            {allTags.length > 0 && (
+                <div className="extra-tags-scroll">
+                    <h3>Loaded Tags:</h3>
+                    <div className="extra-tags-container">
+                        {allTags.map((tag, index) => (
+                            <span key={index} className="tag">
+                                {tag.name}
+                            </span>
                         ))}
                     </div>
-                )}
-                {extraTags.length > 0 && (
-                    <div className="extra-tags-scroll">
-                        <h3>Loaded Tags:</h3>
-                        <div className="extra-tags-container">
-                            {extraTags.map((tag, index) => (
-                                <span key={index} className="tag">
-                                    {tag.name}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
-    );
+    </div>
+);
+
 };
 
 export default ImageModal;
