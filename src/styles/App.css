@@ -153,10 +153,6 @@ h2 {
   font-size: 1rem;
 }
 
-.tags-action{
-  display: flex;
-  justify-content: space-between;
-}
 
 .modal-buttons {
   display: flex;
@@ -225,11 +221,22 @@ h2 {
   color: #555;
 }
 
-
 .tags-actions {
   display: flex;
   gap: 18px;
 }
+
+.tags-actions button.selected {
+  background-color: gray;
+  color: white;
+  border: 1px solid #ccc;
+}
+
+.tags-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 .app__search {
   margin-bottom: 18px;
