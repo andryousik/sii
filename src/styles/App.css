@@ -223,7 +223,8 @@ h2 {
 
 .tags-actions {
   display: flex;
-  gap: 18px;
+  gap:18px;
+  justify-content: center;
 }
 
 .tags-actions button.selected {
