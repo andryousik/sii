@@ -1,70 +1,122 @@
-# Getting Started with Create React App
+# React-приложение для тегирования изображений
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Это приложение на React, которое позволяет пользователям просматривать изображения, загружать дополнительные теги для изображений с использованием различных моделей (например, "vit", "clip") и отображать теги динамически.
 
-## Available Scripts
+## Возможности
 
-In the project directory, you can run:
+- **Отображение изображений**: Просмотр изображений в модальном окне с функцией увеличения.
+- **Динамическая загрузка тегов**: Получение и отображение тегов с использованием различных моделей.
+- **Поиск и фильтрация**: Поиск изображений и отображение соответствующих тегов.
+- **Адаптивный дизайн**: Полностью адаптивный и стилизованный с использованием CSS.
 
-### `npm start`
+## Начало работы
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Следуйте этим шагам, чтобы настроить и запустить проект локально.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Требования
 
-### `npm test`
+- [Node.js](https://nodejs.org/) (рекомендуемая версия 16.x и выше)
+- npm или yarn (Менеджер пакетов для Node.js)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. Установка
 
-### `npm run build`
+1. Клонируйте репозиторий:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Установите зависимости:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    ```bash
+    npm install
+    # или
+    yarn install
 
-### `npm run eject`
+3. Back-end приложения брался из репозиториия:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    https://github.com/NeZlox/cii.git
+    В нём подробно описано подключение  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    ИЛИ
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    Настройте конфигурацию API в файле src/api/config.js Обновите объект endpoints, чтобы соответствовать вашим маршрутам API
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3.Запуск приложения
 
-## Learn More
+Чтобы запустить сервер разработки воспользуйтесь командами :
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   ```bash
+   npm start
+  ```
+ или
+  ```bash
+   yarn start
+  ```
+Приложение будет доступно по адресу http://localhost:3000.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4.Структура проекта
 
-### Code Splitting
+  ```react
+  src/
+  ├── components/          # Переиспользуемые React-компоненты
+  │   ├── ImageModal.js    # Модальное окно для отображения изображений и загрузки тегов
+  ├── api/
+  │   ├── config.js        # Конфигурация API
+  ├── styles/
+  │   ├── App.css          # Основные стили CSS
+  ├── App.js               # Корневой компонент
+  ├── index.js             # Точка входа в React
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 5.Конфигурация
 
-### Analyzing the Bundle Size
+Убедитесь, что вы настроили API эндпоинты в файле src/api/config.js. Пример структуры:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```react
+  export const config = {
+    endpoints: {
+      tags: {
+        types: {
+          vit: "/api/tags/vit",
+          clip: "/api/tags/clip",
+          union: "/api/tags/union",
+          intersection: "/api/tags/intersection",
+        },
+      },
+    },
+  };
+```
+### 6.Доступные скрипты
 
-### Making a Progressive Web App
+В директории проекта вы можете выполнить следующие команды:
+  
+  ```bash npm start / yarn start ``` — Запускает приложение в режиме разработки. Откройте http://localhost:3000, чтобы просмотреть его в браузере.
+  
+  ```bash npm run build / yarn build ``` — Создаёт сборку для продакшн-режима в папке build. Приложение будет оптимизировано для лучшей производительности.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 7.Как использовать
 
-### Advanced Configuration
+  1. Загрузить изображение: Выберите изображение для загрузки и просмотра в модальном окне.
+  2. Загрузить теги: Используйте доступные кнопки для получения тегов с разных моделей (например, "vit", "clip").
+  3. Поиск изображений: Используйте функцию поиска, чтобы найти изображения и просмотреть их теги.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 8.Зависимости
 
-### Deployment
+Проект использует следующие основные зависимости:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  React: Библиотека для создания пользовательских интерфейсов.
+  Axios: Клиент для работы с HTTP-запросами.
+  Полный список зависимостей можно увидеть в файле package.json.
 
-### `npm run build` fails to minify
+### 9.Лицензия
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  Этот проект лицензирован на условиях MIT License.
+
+### 10. Репозиторий
+
+  Фронтенд и API этого проекта содержатся в репозитории cii. В репозитории вы найдете как код для клиентской части (фронтенд, использующий React), так и для серверной части (API), которые работают вместе для реализации функционала:
+  
+back-end: https://github.com/NeZlox/cii.git
+
+front-end: https://github.com/andryousik/sii.git
