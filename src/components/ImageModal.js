@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { apiClient, config } from "../api/config";
 
-const ImageModal = ({ imageSrc, altText, tags = [], onClose,file }) => {
+const ImageModal = ({ imageSrc, altText, tags = [], onClose, file }) => {
     const [extraTags, setExtraTags] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -12,7 +12,7 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose,file }) => {
                 file: file,
             }, {
                 headers: {
-                    "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
+                    "Content-Type": "multipart/form-data",
                 },
             });
             if (response.data && Array.isArray(response.data.predicted_tags)) {
@@ -50,43 +50,44 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose,file }) => {
                         <span>No tags available</span>
                     )}
                 </div>
-                {!!file &&
+                {!!file && (
                     <div className="tags-actions">
-                    <button
-                        onClick={() => handleLoadTags(config.endpoints.tags.types.vit)}
-                        disabled={loading}
-                    >   
-                        vit
-                    </button>
-                    <button
-                        onClick={() => handleLoadTags(config.endpoints.tags.types.clip)}
-                        disabled={loading}
-                    >
-                        clip
-                    </button>
-                    <button
-                        onClick={() => handleLoadTags(config.endpoints.tags.types.union)}
-                        disabled={loading}
-                    >
-                        vit U clip
-                    </button>
-                    <button
-                        onClick={() => handleLoadTags(config.endpoints.tags.types.intersection)}
-                        disabled={loading}
-                    >
-                        vit ∩ clip
-                    </button>
-                </div>
-                }
-                {tags.length > 0 && (
-                    <div className="extra-tags">
+                        <button
+                            onClick={() => handleLoadTags(config.endpoints.tags.types.vit)}
+                            disabled={loading}
+                        >
+                            vit
+                        </button>
+                        <button
+                            onClick={() => handleLoadTags(config.endpoints.tags.types.clip)}
+                            disabled={loading}
+                        >
+                            clip
+                        </button>
+                        <button
+                            onClick={() => handleLoadTags(config.endpoints.tags.types.union)}
+                            disabled={loading}
+                        >
+                            vit U clip
+                        </button>
+                        <button
+                            onClick={() => handleLoadTags(config.endpoints.tags.types.intersection)}
+                            disabled={loading}
+                        >
+                            vit ∩ clip
+                        </button>
+                    </div>
+                )}
+                {extraTags.length > 0 && (
+                    <div className="extra-tags-scroll">
                         <h3>Loaded Tags:</h3>
-                        {tags.map((tag, index) => (
-                            <span key={index} className="tag">
-                                {tag.name}
-                            </span>
-                            
-                        ))}
+                        <div className="extra-tags-container">
+                            {extraTags.map((tag, index) => (
+                                <span key={index} className="tag">
+                                    {tag.name}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
