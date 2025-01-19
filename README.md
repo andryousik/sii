@@ -57,7 +57,7 @@
 
 ### 4.Структура проекта
 
-  ```react
+  ```text
   src/
   ├── components/          # Переиспользуемые React-компоненты
   │   ├── ImageModal.js    # Модальное окно для отображения изображений и загрузки тегов
@@ -73,7 +73,7 @@
 
 Убедитесь, что вы настроили API эндпоинты в файле src/api/config.js. Пример структуры:
 
-```react
+```script
   export const config = {
     endpoints: {
       tags: {
