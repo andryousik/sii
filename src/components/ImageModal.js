@@ -4,17 +4,21 @@ import { apiClient, config } from "../api/config";
 const ImageModal = ({ imageSrc, altText, tags = [], onClose, file }) => {
     const [extraTags, setExtraTags] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedModel, setSelectedModel] = useState(null); // Для отслеживания выбранной модели
 
-    const handleLoadTags = async (endpoint) => {
+    const handleLoadTags = async (endpoint, modelName) => {
         setLoading(true);
+        setSelectedModel(modelName); // Устанавливаем выбранную модель
         try {
-            const response = await apiClient.post(endpoint, {
-                file: file,
-            }, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await apiClient.post(
+                endpoint,
+                { file: file },
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             if (response.data && Array.isArray(response.data.predicted_tags)) {
                 setExtraTags(response.data.predicted_tags.map((tag) => ({ name: tag })));
             }
@@ -33,30 +37,21 @@ const ImageModal = ({ imageSrc, altText, tags = [], onClose, file }) => {
                 </div>
                 {!!file && (
                     <div className="tags-actions">
-                        <button
-                            onClick={() => handleLoadTags(config.endpoints.tags.types.vit)}
-                            disabled={loading}
-                        >
-                            vit
-                        </button>
-                        <button
-                            onClick={() => handleLoadTags(config.endpoints.tags.types.clip)}
-                            disabled={loading}
-                        >
-                            clip
-                        </button>
-                        <button
-                            onClick={() => handleLoadTags(config.endpoints.tags.types.union)}
-                            disabled={loading}
-                        >
-                            vit U clip
-                        </button>
-                        <button
-                            onClick={() => handleLoadTags(config.endpoints.tags.types.intersection)}
-                            disabled={loading}
-                        >
-                            vit ∩ clip
-                        </button>
+                        {[
+                            { label: "vit", endpoint: config.endpoints.tags.types.vit },
+                            { label: "clip", endpoint: config.endpoints.tags.types.clip },
+                            { label: "vit U clip", endpoint: config.endpoints.tags.types.union },
+                            { label: "vit ∩ clip", endpoint: config.endpoints.tags.types.intersection },
+                        ].map(({ label, endpoint }) => (
+                            <button
+                                key={label}
+                                onClick={() => handleLoadTags(endpoint, label)}
+                                disabled={selectedModel === label || loading} // Отключение кнопки, если она выбрана
+                                className={selectedModel === label ? "selected" : ""}
+                            >
+                                {label}
+                            </button>
+                        ))}
                     </div>
                 )}
                 {extraTags.length > 0 && (

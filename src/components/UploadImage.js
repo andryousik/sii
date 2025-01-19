@@ -12,27 +12,7 @@ const UploadImage = () => {
         const file = Array.from(event.target.files); // Получаем список файлов
         if (file.length > 0) {
             setUploadedImage(file[0]); // Сохраняем первый загруженный файл
-            try {
-                // Отправляем файл на сервер и получаем ответ
-                const response = await apiClient.post(
-                    `${config.endpoints.tags.types.vit}`, // Конечная точка API
-                    {
-                        file: file[0], // Передаем файл как тело запроса
-                    },
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data", // Указываем, что это загрузка файла
-                        },
-                    }
-                );
 
-                // Если ответ содержит predicted_tags, сохраняем их в состояние
-                if (response.data && Array.isArray(response.data.predicted_tags)) {
-                    setTags(response.data.predicted_tags.map((tag) => ({ name: tag }))); // Преобразуем массив в объекты { name: tag }
-                }
-            } catch (error) {
-                console.error("Ошибка при загрузке файла:", error); // Логируем ошибку, если запрос не удался
-            }
         }
     };
 
